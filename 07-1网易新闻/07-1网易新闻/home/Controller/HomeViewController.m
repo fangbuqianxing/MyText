@@ -53,7 +53,7 @@
        
         CGFloat labelX = labelW * idx;
         
-        UILabel *label = [[ChannelLabel alloc] initWithFrame:CGRectMake(labelX, labelY, labelW, labelH)];
+        ChannelLabel *label = [[ChannelLabel alloc] initWithFrame:CGRectMake(labelX, labelY, labelW, labelH)];
         
         [self.channelScrollView addSubview:label];
         
@@ -66,6 +66,11 @@
         [label addGestureRecognizer:tapLabel];
         
         label.userInteractionEnabled = YES;
+        
+        if (idx == 0) {
+            
+            label.scale = 1;
+        }
     }];
     
     self.channelScrollView.contentSize = CGSizeMake(_channels.count *labelW, 0);

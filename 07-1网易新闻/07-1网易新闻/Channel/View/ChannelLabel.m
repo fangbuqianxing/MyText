@@ -19,7 +19,7 @@
         
         self.font = [UIFont systemFontOfSize:16.0];
         
-        self.backgroundColor =  [UIColor colorWithRed:((float)arc4random_uniform(256) / 255.0) green:((float)arc4random_uniform(256) / 255.0) blue:((float)arc4random_uniform(256) / 255.0) alpha:1.0];
+//        self.backgroundColor =  [UIColor colorWithRed:((float)arc4random_uniform(256) / 255.0) green:((float)arc4random_uniform(256) / 255.0) blue:((float)arc4random_uniform(256) / 255.0) alpha:1.0];
     }
     return self;
 }
@@ -28,7 +28,11 @@
 
     _scale = scale;
     
-    CGFloat minScale = 1 + 0.2 * 
+    self.textColor = [UIColor colorWithRed:scale green:0 blue:0 alpha:1];
+    
+    CGFloat minScale = 1 + 0.3 * scale;
+    
+    self.transform = CGAffineTransformMakeScale(minScale, minScale);
 }
 
 @end
