@@ -24,4 +24,11 @@
     return self;
 }
 
+- (void)setScale:(CGFloat)scale {
+
+    _scale = scale;
+    
+    CGFloat minScale = 1 + 0.2 * 
+}
+
 @end

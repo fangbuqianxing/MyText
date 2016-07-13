@@ -11,7 +11,7 @@
 #import "ChannelModel.h"
 #import "HomeCollectionViewCell.h"
 
-@interface HomeViewController ()<UICollectionViewDataSource>
+@interface HomeViewController ()<UICollectionViewDataSource,UIScrollViewDelegate>
 
 
 @property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *homeFlowLayout;
@@ -60,9 +60,87 @@
         label.text = [_channels[idx] tname];
         
         label.tag = idx;
+        
+        UITapGestureRecognizer *tapLabel = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(channelLabelClick:)];
+        
+        [label addGestureRecognizer:tapLabel];
+        
+        label.userInteractionEnabled = YES;
     }];
     
     self.channelScrollView.contentSize = CGSizeMake(_channels.count *labelW, 0);
+}
+
+- (void)channelLabelClick:(UITapGestureRecognizer *)recognizer {
+
+    ChannelLabel *label = (ChannelLabel *)recognizer.view;
+    
+    CGFloat offsetX = label.center.x - self.view.bounds.size.width * 0.5;
+    
+    CGFloat min_offsetX = 0;
+    CGFloat max_offsetX = self.channelScrollView.contentSize.width - self.view.bounds.size.width;
+    
+    if (offsetX < min_offsetX) {
+        
+        offsetX = min_offsetX;
+    }else if(offsetX > max_offsetX){
+        offsetX = max_offsetX;
+    }
+    
+    [self.channelScrollView setContentOffset:CGPointMake(offsetX, 0) animated:YES];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:label.tag inSection:0];
+    
+    [self.homeCollectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+
+    CGFloat offsetX = scrollView.contentOffset.x;
+    
+    NSInteger index = offsetX / self.homeFlowLayout.itemSize.width;
+    
+    ChannelLabel *label = self.channelScrollView.subviews[index];
+    
+    CGFloat label_offsetX = label.center.x - self.view.bounds.size.width * 0.5;
+    
+    CGFloat min_offsetX = 0;
+    CGFloat max_offsetX = self.channelScrollView.contentSize.width - self.view.bounds.size.width;
+    
+    if (label_offsetX < min_offsetX) {
+        
+        label_offsetX = min_offsetX;
+    }else if(label_offsetX > max_offsetX){
+        label_offsetX = max_offsetX;
+    }
+    
+    [self.channelScrollView setContentOffset:CGPointMake(label_offsetX, 0) animated:YES];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+    CGFloat index_float = scrollView.contentOffset.x / self.homeFlowLayout.itemSize.width;
+    
+    NSInteger left_index = (NSInteger)index_float;
+    
+    NSInteger right_index = left_index + 1;
+    
+    CGFloat right_scale = index_float - left_index;
+    
+    CGFloat left_scale = 1 - right_scale;
+    
+    ChannelLabel *leftLabel = self.channelScrollView.subviews[left_index];
+    
+    leftLabel.scale = left_scale;
+    
+    if (right_index < self.channelScrollView.subviews.count) {
+        
+        ChannelLabel *rightLabel = self.channelScrollView.subviews[right_index];
+        
+        rightLabel.scale = right_scale;
+    }
+    
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
