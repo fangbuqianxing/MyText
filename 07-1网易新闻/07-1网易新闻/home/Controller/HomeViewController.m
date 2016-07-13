@@ -58,6 +58,8 @@
         [self.channelScrollView addSubview:label];
         
         label.text = [_channels[idx] tname];
+        
+        label.tag = idx;
     }];
     
     self.channelScrollView.contentSize = CGSizeMake(_channels.count *labelW, 0);

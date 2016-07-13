@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *cycleFlowLayout;
 
+@property (nonatomic, weak)UIPageControl  *pageControl;
 
 @end
 
@@ -47,6 +48,7 @@
         
         [self.collectionView reloadData];
         
+        [self createPageControl];
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:cycleList.count inSection:0];
         
@@ -58,16 +60,46 @@
     }];
 }
 
+- (void)createPageControl {
+
+    UIPageControl *pageControl = [[UIPageControl alloc] init];
+    
+    pageControl.numberOfPages = self.cycleList.count;
+    
+    pageControl.currentPageIndicatorTintColor = [UIColor redColor];
+    
+    pageControl.pageIndicatorTintColor = [UIColor greenColor];
+    
+    [pageControl sizeToFit];
+    
+//    CGSize pageSize = [pageControl sizeForNumberOfPages:self.cycleList.count];
+    
+    CGFloat pageX  = self.view.bounds.size.width - pageControl.bounds.size.width - 10;
+    
+    CGFloat pageY  = self.view.bounds.size.height - pageControl.bounds.size.height - 12;
+    
+    pageControl.frame = CGRectMake(pageX, pageY, pageControl.bounds.size.width, pageControl.bounds.size.height);
+    
+    self.pageControl = pageControl;
+    
+    [self.view addSubview:pageControl];
+    
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 
     NSInteger index = scrollView.contentOffset.x / scrollView.bounds.size.width;
     
+    self.pageControl.currentPage = index % self.cycleList.count;
+    
     NSInteger items = [self.collectionView numberOfItemsInSection:0];
     
     NSIndexPath *indexPath ;
+    
     if (index == 0) {
         
         indexPath = [NSIndexPath indexPathForItem:_cycleList.count inSection:0];
+        
     }else if (index == items - 1) {
     
         indexPath = [NSIndexPath indexPathForItem:self.cycleList.count - 1 inSection:0];
